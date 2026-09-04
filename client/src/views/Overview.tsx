@@ -1,9 +1,13 @@
-import { ArrowUpRight, Check, KeyRound, Mail, Settings } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowUpRight, Check, Crown, KeyRound, Mail, Settings } from "lucide-react";
 import { Link } from "react-router";
 import { useAuth } from "@/auth/useAuth";
+import { api } from "@/lib/api";
+import type { ApiResponse, Subscription } from "@/types/api";
 
 export default function Overview() {
   const { user } = useAuth();
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const firstName = user?.name.split(" ")[0];
   const joined = user
     ? new Intl.DateTimeFormat("tr-TR", {
@@ -11,6 +15,16 @@ export default function Overview() {
         year: "numeric",
       }).format(new Date(user.created_at))
     : "";
+  const isPremium = subscription?.plan_code === "premium";
+  const subscriptionEnd = subscription?.ends_at
+    ? new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "short", year: "numeric" }).format(new Date(subscription.ends_at))
+    : "Süresiz";
+
+  useEffect(() => {
+    api.get<ApiResponse<Subscription>>("/subscriptions/me", true)
+      .then((response) => setSubscription(response.data))
+      .catch(() => setSubscription(null));
+  }, []);
 
   return (
     <div>
@@ -33,32 +47,41 @@ export default function Overview() {
         </Link>
       </div>
       <section className="grid gap-8 py-10 lg:grid-cols-[1.35fr_1fr]">
-        <div className="rounded-2xl bg-zinc-950 p-7 text-white sm:p-9">
+        <div className={`relative overflow-hidden rounded-2xl p-7 text-white sm:p-9 ${isPremium ? "bg-gradient-to-br from-emerald-800 via-emerald-950 to-zinc-950" : "bg-zinc-950"}`}>
+          <div className="absolute -right-16 -top-20 size-56 rounded-full border border-white/10" />
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.16em] text-zinc-400">
-                Ana hesap
+                {isPremium ? "Premium hesap" : "Ücretsiz hesap"}
               </p>
               <p className="mt-7 text-2xl font-medium">{user?.name}</p>
               <p className="mt-1 text-sm text-zinc-400">{user?.email}</p>
             </div>
-            <span className="grid size-10 place-items-center rounded-full bg-emerald-400 text-zinc-950">
-              <Check className="size-5" />
+            <span className={`relative grid size-10 place-items-center rounded-full ${isPremium ? "bg-emerald-300 text-emerald-950" : "bg-white/10 text-white"}`}>
+              {isPremium ? <Crown className="size-5" /> : <Check className="size-5" />}
             </span>
           </div>
           <div className="mt-16 flex items-end justify-between">
             <div>
-              <p className="text-xs text-zinc-500">Üyelik başlangıcı</p>
-              <p className="mt-1 text-sm capitalize">{joined}</p>
+              <p className="text-xs text-zinc-500">{isPremium ? "Premium bitişi" : "Üyelik başlangıcı"}</p>
+              <p className="mt-1 text-sm capitalize">{isPremium ? subscriptionEnd : joined}</p>
             </div>
             <span className="text-xs font-medium text-emerald-300">
-              DOĞRULANDI
+              {isPremium ? "PREMIUM" : "ÜCRETSİZ"}
             </span>
           </div>
         </div>
         <div className="py-2">
           <h2 className="text-sm font-semibold">Hızlı işlemler</h2>
           <div className="mt-4 divide-y divide-zinc-200 border-y border-zinc-200">
+            <Link
+              to="/settings#subscription"
+              className="flex items-center gap-4 py-5 group"
+            >
+              <span className="grid size-9 place-items-center rounded-full bg-zinc-200"><Crown className="size-4" /></span>
+              <span className="flex-1 text-sm">Plan ve aboneliği yönet</span>
+              <ArrowUpRight className="size-4 text-zinc-400 group-hover:text-zinc-950" />
+            </Link>
             <Link
               to="/settings#profile"
               className="flex items-center gap-4 py-5 group"

@@ -2,6 +2,7 @@ const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000/api";
 
 const ACCESS_TOKEN_KEY = "bayrat_access_token";
 const REFRESH_TOKEN_KEY = "bayrat_refresh_token";
+let refreshPromise: Promise<boolean> | null = null;
 
 export class ApiError extends Error {
   status: number;
@@ -62,7 +63,7 @@ async function send<T>(path: string, options: RequestOptions = {}): Promise<T> {
   return payload as T;
 }
 
-async function refreshSession() {
+async function requestNewSession() {
   const refreshToken = tokenStorage.getRefresh();
   if (!refreshToken) return false;
 
@@ -80,6 +81,15 @@ async function refreshSession() {
     tokenStorage.clear();
     return false;
   }
+}
+
+function refreshSession() {
+  if (!refreshPromise) {
+    refreshPromise = requestNewSession().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
 }
 
 export const api = {

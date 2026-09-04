@@ -46,5 +46,9 @@ npm run db:status
 - `PATCH /api/users/me/password` — `{ "currentPassword", "newPassword" }`, token gerekir
 - `POST /api/users/me/email-change` — `{ "currentPassword", "newEmail" }`, token gerekir
 - `DELETE /api/users/me` — `{ "currentPassword" }`, token gerekir
+- `GET /api/subscriptions/plans`
+- `GET /api/subscriptions/me` — token gerekir
+- `POST /api/subscriptions/me/upgrade` — `{ "billingPeriod" }`, token gerekir
+- `POST /api/subscriptions/me/cancel` — token gerekir
 
 Akış: route → validation/auth middleware → controller → service → repository → PostgreSQL.
