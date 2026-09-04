@@ -12,4 +12,26 @@ export const userRepository = {
     const [user] = await db<UserRow>("users").insert(data).returning("*");
     return user;
   },
+
+  async updatePasswordAndRevokeSessions(id: string, passwordHash: string) {
+    await db.transaction(async (transaction) => {
+      await transaction<UserRow>("users")
+        .where({ id })
+        .update({
+          password_hash: passwordHash,
+          token_version: transaction.raw("token_version + 1"),
+        });
+      await transaction("refresh_tokens").where({ user_id: id }).delete();
+    });
+  },
+
+  async updateProfile(id: string, data: Pick<UserRow, "name">) {
+    const [user] = await db<UserRow>("users")
+      .where({ id })
+      .update(data)
+      .returning("*");
+    return user;
+  },
+
+  deleteById: (id: string) => db<UserRow>("users").where({ id }).delete(),
 };

@@ -2,8 +2,10 @@ import type { RequestHandler } from "express";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import { env } from "../../config/env";
 import { appError } from "../../shared/errors/app-error";
+import { userRepository } from "../users/user.repository";
+import { authSessionRepository } from "./auth-session.repository";
 
-export const requireAuth: RequestHandler = (request, _response, next) => {
+export const requireAuth: RequestHandler = async (request, _response, next) => {
   const [scheme, token] = request.headers.authorization?.split(" ") ?? [];
 
   if (scheme !== "Bearer" || !token) {
@@ -13,7 +15,22 @@ export const requireAuth: RequestHandler = (request, _response, next) => {
 
   try {
     const payload = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
-    if (!payload.sub) throw new Error("Token subject eksik");
+    if (
+      !payload.sub ||
+      typeof payload.sessionId !== "string" ||
+      typeof payload.tokenVersion !== "number"
+    ) {
+      throw new Error("Token bilgileri eksik");
+    }
+
+    const [user, session] = await Promise.all([
+      userRepository.findById(payload.sub),
+      authSessionRepository.findActiveById(payload.sessionId, payload.sub),
+    ]);
+    if (!user || !session || user.token_version !== payload.tokenVersion) {
+      throw new Error("Token iptal edilmiş");
+    }
+
     request.auth = { userId: payload.sub };
     next();
   } catch {
