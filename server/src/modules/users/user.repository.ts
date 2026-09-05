@@ -9,8 +9,21 @@ export const userRepository = {
     db<UserRow>("users").where({ id }).first(),
 
   async create(data: Pick<UserRow, "name" | "email" | "password_hash">) {
-    const [user] = await db<UserRow>("users").insert(data).returning("*");
-    return user;
+    return db.transaction(async (transaction) => {
+      const [user] = await transaction<UserRow>("users").insert(data).returning("*");
+      const freePlan = await transaction("plans")
+        .where({ code: "free", active: true })
+        .first("id");
+
+      if (!freePlan) throw new Error("Ücretsiz plan bulunamadı");
+
+      await transaction("subscriptions").insert({
+        user_id: user.id,
+        plan_id: freePlan.id,
+      });
+
+      return user;
+    });
   },
 
   async updatePasswordAndRevokeSessions(id: string, passwordHash: string) {

@@ -326,3 +326,13 @@ Yaygın HTTP durum kodları:
 - `409` — E-posta zaten kullanımda
 - `429` — Çok fazla istek
 - `500` — Beklenmeyen sunucu hatası
+
+## Üyelik
+
+### GET /api/subscriptions/plans
+
+Aktif üyelik planlarını listeler. Şimdilik yalnızca ücretsiz plan bulunur.
+
+### GET /api/subscriptions/me
+
+Giriş yapan kullanıcının mevcut üyeliğini getirir. HttpOnly access cookie gerekir.

@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/auth/useAuth";
 import { FormMessage } from "@/components/FormMessage";
@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api, ApiError } from "@/lib/api";
-import type { ApiResponse, User } from "@/types/api";
+import type { ApiResponse, Subscription, User } from "@/types/api";
 
 type Status = { message: string; error?: boolean };
 const emptyStatus: Status = { message: "" };
+const errorMessage = (error: unknown) =>
+  error instanceof ApiError ? error.message : "İşlem tamamlanamadı";
 
 function SettingsSection({ id, title, description, children }: { id: string; title: string; description: string; children: ReactNode }) {
   return <section id={id} className="scroll-mt-8 grid gap-7 border-t border-border py-10 lg:grid-cols-[17rem_1fr]"><div><h2 className="font-semibold tracking-tight">{title}</h2><p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">{description}</p></div><div className="max-w-xl">{children}</div></section>;
@@ -22,10 +24,15 @@ export default function SettingsPage() {
   const [emailStatus, setEmailStatus] = useState<Status>(emptyStatus);
   const [passwordStatus, setPasswordStatus] = useState<Status>(emptyStatus);
   const [deleteStatus, setDeleteStatus] = useState<Status>(emptyStatus);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [subscriptionError, setSubscriptionError] = useState("");
   const [loading, setLoading] = useState("");
 
-  const errorMessage = (error: unknown) =>
-    error instanceof ApiError ? error.message : "İşlem tamamlanamadı";
+  useEffect(() => {
+    api.get<ApiResponse<Subscription>>("/subscriptions/me", true)
+      .then((response) => setSubscription(response.data))
+      .catch((error) => setSubscriptionError(errorMessage(error)));
+  }, []);
 
   async function updateProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -130,6 +137,35 @@ export default function SettingsPage() {
         </h1>
         <p className="mt-3 max-w-xl text-muted-foreground">Profilinizi, giriş bilgilerinizi ve hesabınızın güvenliğini yönetin.</p>
       </header>
+
+      <SettingsSection
+        id="membership"
+        title="Üyelik"
+        description="Mevcut üyeliğinizi ve erişim durumunuzu görüntüleyin."
+      >
+        {subscription ? (
+          <div className="space-y-3 border-y border-border py-5">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="font-medium">{subscription.plan_name}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {subscription.plan_description}
+                </p>
+              </div>
+              <span className="text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
+                {subscription.status === "active" ? "Aktif" : "Pasif"}
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Başlangıç: {new Intl.DateTimeFormat("tr-TR", { dateStyle: "long" }).format(new Date(subscription.starts_at))}
+            </p>
+          </div>
+        ) : subscriptionError ? (
+          <FormMessage message={subscriptionError} />
+        ) : (
+          <p className="text-sm text-muted-foreground">Üyelik bilgisi yükleniyor…</p>
+        )}
+      </SettingsSection>
 
       <SettingsSection id="profile" title="Profil bilgileri" description="Hesabınızda görünen adı buradan değiştirebilirsiniz."><form onSubmit={updateProfile} className="space-y-5"><div className="space-y-2"><Label htmlFor="name">Ad soyad</Label><Input id="name" name="name" defaultValue={user?.name} minLength={2} maxLength={100} required /></div><div className="space-y-2"><Label>E-posta</Label><Input value={user?.email ?? ""} disabled /><p className="text-xs text-muted-foreground">E-posta adresi aşağıdaki doğrulama akışıyla değiştirilir.</p></div><FormMessage message={profileStatus.message} type={profileStatus.error ? "error" : "success"} /><Button type="submit" disabled={loading === "profile"}>{loading === "profile" ? "Kaydediliyor…" : "Değişiklikleri kaydet"}</Button></form></SettingsSection>
 
