@@ -4,6 +4,7 @@ import { NavLink, Outlet, useNavigate } from "react-router";
 import { useAuth } from "@/auth/useAuth";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/mode-toggle";
 import {
   Dialog,
   DialogContent,
@@ -35,7 +36,7 @@ const navigationItems: NavigationItem[] = [
 ];
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
-  `flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors ${isActive ? "bg-zinc-900 text-white" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950"}`;
+  `flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors ${isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`;
 
 function Navigation({ onNavigate }: { onNavigate?: () => void }) {
   return (
@@ -65,7 +66,7 @@ function LogoutDialog({ onLogout }: { onLogout: () => void }) {
         render={
           <Button
             variant="ghost"
-            className="mt-3 w-full justify-start text-zinc-600"
+            className="mt-3 w-full justify-start text-muted-foreground"
           />
         }
       >
@@ -105,19 +106,22 @@ export function AppShell() {
   }
 
   const account = (
-    <div className="border-t border-zinc-200 pt-5">
+    <div className="border-t border-border pt-5">
       <p className="truncate px-2 text-sm font-medium">{user?.name}</p>
-      <p className="truncate px-2 text-xs text-zinc-500">{user?.email}</p>
+      <p className="truncate px-2 text-xs text-muted-foreground">{user?.email}</p>
       <LogoutDialog onLogout={logout} />
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#f7f7f3] text-zinc-950">
-      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-zinc-200 bg-[#f7f7f3] p-5 md:flex md:flex-col">
-        <div className="flex items-center gap-2 px-2 text-sm font-semibold tracking-tight">
-          <Landmark className="size-4 text-emerald-700" />
-          BAYRAT
+    <div className="min-h-screen bg-background text-foreground">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-border bg-background p-5 md:flex md:flex-col">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 px-2 text-sm font-semibold tracking-tight">
+            <Landmark className="size-4 text-emerald-600 dark:text-emerald-400" />
+            BAYRAT
+          </div>
+          <ModeToggle />
         </div>
         <div className="mt-12">
           <Navigation />
@@ -125,12 +129,14 @@ export function AppShell() {
         <div className="mt-auto">{account}</div>
       </aside>
 
-      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-zinc-200 bg-[#f7f7f3]/90 px-5 backdrop-blur-md md:hidden">
+      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-background/90 px-5 backdrop-blur-md md:hidden">
         <span className="flex items-center gap-2 text-sm font-semibold">
-          <Landmark className="size-4 text-emerald-700" />
+          <Landmark className="size-4 text-emerald-600 dark:text-emerald-400" />
           BAYRAT
         </span>
-        <Dialog open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+        <div className="flex items-center gap-1">
+          <ModeToggle />
+          <Dialog open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
           <DialogTrigger render={<Button variant="ghost" size="icon" />}>
             <Menu />
             <span className="sr-only">Menüyü aç</span>
@@ -140,7 +146,7 @@ export function AppShell() {
             className="left-auto right-0 top-0 flex h-dvh max-w-[20rem] translate-x-0 translate-y-0 flex-col rounded-none p-5"
           >
             <DialogTitle className="flex items-center gap-2 px-2 text-sm font-semibold">
-              <Landmark className="size-4 text-emerald-700" />
+              <Landmark className="size-4 text-emerald-600 dark:text-emerald-400" />
               BAYRAT
             </DialogTitle>
             <DialogDescription className="sr-only">
@@ -151,7 +157,8 @@ export function AppShell() {
             </div>
             <div className="mt-auto">{account}</div>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        </div>
       </header>
 
       <main className="md:pl-64">

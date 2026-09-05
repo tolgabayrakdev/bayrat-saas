@@ -6,7 +6,6 @@ import morgan from "morgan";
 import { env } from "./config/env";
 import { authRouter } from "./modules/auth/auth.routes";
 import { userRouter } from "./modules/users/user.routes";
-import { subscriptionRouter } from "./modules/subscriptions/subscription.routes";
 import { errorHandler } from "./shared/middlewares/error-handler";
 import { notFound } from "./shared/middlewares/not-found";
 
@@ -24,7 +23,6 @@ app.get("/health", (_request, response) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
-app.use("/api/subscriptions", subscriptionRouter);
 
 app.use(notFound);
 app.use(errorHandler);

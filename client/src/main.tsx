@@ -6,6 +6,7 @@ import { AuthProvider } from "./auth/AuthProvider";
 import { AppShell } from "./components/AppShell";
 import { GuestRoute } from "./components/GuestRoute";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ThemeProvider } from "./components/theme-provider";
 import ForgotPassword from "./views/ForgotPassword";
 import Login from "./views/Login";
 import NotFound from "./views/NotFound";
@@ -34,7 +35,6 @@ const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [{ element: <AppShell />, children: [
       { path: "/overview", element: <Overview /> },
-      { path: "/plans", element: <Navigate to="/settings#subscription" replace /> },
       { path: "/settings", element: <SettingsPage /> },
     ] }],
   },
@@ -43,8 +43,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <ThemeProvider defaultTheme="system" storageKey="bayrat-theme">
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>,
 );

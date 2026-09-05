@@ -17,7 +17,7 @@ function AlertDialogContent({ className, ...props }: AlertDialogPrimitive.Popup.
       <AlertDialogPrimitive.Backdrop className="fixed inset-0 z-50 bg-black/25 backdrop-blur-[2px] data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
       <AlertDialogPrimitive.Popup
         data-slot="alert-dialog-content"
-        className={cn("fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6 shadow-2xl outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className)}
+        className={cn("fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl bg-popover p-6 text-popover-foreground shadow-2xl ring-1 ring-border outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className)}
         {...props}
       />
     </AlertDialogPrimitive.Portal>
@@ -37,7 +37,7 @@ function AlertDialogTitle(props: AlertDialogPrimitive.Title.Props) {
 }
 
 function AlertDialogDescription(props: AlertDialogPrimitive.Description.Props) {
-  return <AlertDialogPrimitive.Description className={cn("text-sm leading-6 text-zinc-500", props.className)} {...props} />;
+  return <AlertDialogPrimitive.Description className={cn("text-sm leading-6 text-muted-foreground", props.className)} {...props} />;
 }
 
 function AlertDialogCancel(props: AlertDialogPrimitive.Close.Props) {

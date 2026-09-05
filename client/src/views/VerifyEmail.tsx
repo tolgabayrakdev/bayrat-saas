@@ -93,7 +93,7 @@ export default function VerifyEmail() {
         )}
         <Link
           to="/login"
-          className="block text-sm text-zinc-600 underline underline-offset-4"
+          className="block text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
         >
           Giriş sayfasına dön
         </Link>

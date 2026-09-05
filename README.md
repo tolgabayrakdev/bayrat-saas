@@ -46,9 +46,5 @@ npm run db:status
 - `PATCH /api/users/me/password` — `{ "currentPassword", "newPassword" }`, access cookie gerekir
 - `POST /api/users/me/email-change` — `{ "currentPassword", "newEmail" }`, access cookie gerekir
 - `DELETE /api/users/me` — `{ "currentPassword" }`, access cookie gerekir
-- `GET /api/subscriptions/plans`
-- `GET /api/subscriptions/me` — access cookie gerekir
-- `POST /api/subscriptions/me/upgrade` — `{ "billingPeriod" }`, access cookie gerekir
-- `POST /api/subscriptions/me/cancel` — access cookie gerekir
 
 Akış: route → validation/auth middleware → controller → service → repository → PostgreSQL.

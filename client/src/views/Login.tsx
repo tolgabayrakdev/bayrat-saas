@@ -65,7 +65,7 @@ export default function Login() {
             <Label htmlFor="password">Parola</Label>
             <Link
               to="/forgot-password"
-              className="text-xs text-zinc-600 hover:text-zinc-950"
+              className="text-xs text-muted-foreground hover:text-foreground"
             >
               Parolamı unuttum
             </Link>
@@ -91,11 +91,11 @@ export default function Login() {
           {loading ? "Giriş yapılıyor…" : "Giriş yap"}
           <ArrowRight />
         </Button>
-        <p className="text-center text-sm text-zinc-600">
+        <p className="text-center text-sm text-muted-foreground">
           Hesabınız yok mu?{" "}
           <Link
             to="/register"
-            className="font-medium text-zinc-950 underline underline-offset-4"
+            className="font-medium text-foreground underline underline-offset-4"
           >
             Hesap oluşturun
           </Link>

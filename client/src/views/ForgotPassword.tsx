@@ -53,7 +53,7 @@ export default function ForgotPassword() {
         </Button>
         <Link
           to="/login"
-          className="block text-center text-sm text-zinc-600 hover:text-zinc-950"
+          className="block text-center text-sm text-muted-foreground hover:text-foreground"
         >
           Girişe dön
         </Link>

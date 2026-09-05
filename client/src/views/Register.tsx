@@ -77,18 +77,18 @@ export default function Register() {
             maxLength={72}
             autoComplete="new-password"
           />
-          <p className="text-xs text-zinc-500">En az 8 karakter.</p>
+          <p className="text-xs text-muted-foreground">En az 8 karakter.</p>
         </div>
         <FormMessage message={error} />
         <FormMessage message={message} type="success" />
         <Button type="submit" className="w-full" size="lg" disabled={loading}>
           {loading ? "Oluşturuluyor…" : "Hesap oluştur"}
         </Button>
-        <p className="text-center text-sm text-zinc-600">
+        <p className="text-center text-sm text-muted-foreground">
           Zaten hesabınız var mı?{" "}
           <Link
             to="/login"
-            className="font-medium text-zinc-950 underline underline-offset-4"
+            className="font-medium text-foreground underline underline-offset-4"
           >
             Giriş yapın
           </Link>

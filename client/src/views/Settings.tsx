@@ -7,13 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api, ApiError } from "@/lib/api";
 import type { ApiResponse, User } from "@/types/api";
-import PlansPage from "./Plans";
 
 type Status = { message: string; error?: boolean };
 const emptyStatus: Status = { message: "" };
 
 function SettingsSection({ id, title, description, children }: { id: string; title: string; description: string; children: ReactNode }) {
-  return <section id={id} className="scroll-mt-8 grid gap-7 border-t border-zinc-200 py-10 lg:grid-cols-[17rem_1fr]"><div><h2 className="font-semibold tracking-tight">{title}</h2><p className="mt-2 max-w-xs text-sm leading-6 text-zinc-500">{description}</p></div><div className="max-w-xl">{children}</div></section>;
+  return <section id={id} className="scroll-mt-8 grid gap-7 border-t border-border py-10 lg:grid-cols-[17rem_1fr]"><div><h2 className="font-semibold tracking-tight">{title}</h2><p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">{description}</p></div><div className="max-w-xl">{children}</div></section>;
 }
 
 export default function SettingsPage() {
@@ -125,16 +124,14 @@ export default function SettingsPage() {
   return (
     <div>
       <header className="pb-10">
-        <p className="text-sm text-zinc-500">Kişisel alan</p>
+        <p className="text-sm text-muted-foreground">Kişisel alan</p>
         <h1 className="mt-2 text-4xl font-semibold tracking-[-0.04em]">
           Hesap ayarları
         </h1>
-        <p className="mt-3 max-w-xl text-zinc-600">Profilinizi, giriş bilgilerinizi ve hesabınızın güvenliğini yönetin.</p>
+        <p className="mt-3 max-w-xl text-muted-foreground">Profilinizi, giriş bilgilerinizi ve hesabınızın güvenliğini yönetin.</p>
       </header>
 
-      <SettingsSection id="subscription" title="Plan ve abonelik" description="Mevcut planınızı görüntüleyin veya kullanım döneminizi değiştirin."><PlansPage embedded /></SettingsSection>
-
-      <SettingsSection id="profile" title="Profil bilgileri" description="Hesabınızda görünen adı buradan değiştirebilirsiniz."><form onSubmit={updateProfile} className="space-y-5"><div className="space-y-2"><Label htmlFor="name">Ad soyad</Label><Input id="name" name="name" defaultValue={user?.name} minLength={2} maxLength={100} required /></div><div className="space-y-2"><Label>E-posta</Label><Input value={user?.email ?? ""} disabled /><p className="text-xs text-zinc-500">E-posta adresi aşağıdaki doğrulama akışıyla değiştirilir.</p></div><FormMessage message={profileStatus.message} type={profileStatus.error ? "error" : "success"} /><Button type="submit" disabled={loading === "profile"}>{loading === "profile" ? "Kaydediliyor…" : "Değişiklikleri kaydet"}</Button></form></SettingsSection>
+      <SettingsSection id="profile" title="Profil bilgileri" description="Hesabınızda görünen adı buradan değiştirebilirsiniz."><form onSubmit={updateProfile} className="space-y-5"><div className="space-y-2"><Label htmlFor="name">Ad soyad</Label><Input id="name" name="name" defaultValue={user?.name} minLength={2} maxLength={100} required /></div><div className="space-y-2"><Label>E-posta</Label><Input value={user?.email ?? ""} disabled /><p className="text-xs text-muted-foreground">E-posta adresi aşağıdaki doğrulama akışıyla değiştirilir.</p></div><FormMessage message={profileStatus.message} type={profileStatus.error ? "error" : "success"} /><Button type="submit" disabled={loading === "profile"}>{loading === "profile" ? "Kaydediliyor…" : "Değişiklikleri kaydet"}</Button></form></SettingsSection>
 
       <SettingsSection id="email" title="E-posta değişikliği" description="Yeni adresiniz, gönderilen bağlantıyı doğrulayana kadar hesabınıza uygulanmaz."><form onSubmit={changeEmail} className="space-y-5"><div className="space-y-2"><Label htmlFor="newEmail">Yeni e-posta</Label><Input id="newEmail" name="newEmail" type="email" required /></div><div className="space-y-2"><Label htmlFor="emailPassword">Mevcut parola</Label><Input id="emailPassword" name="currentPassword" type="password" autoComplete="current-password" required /></div><FormMessage message={emailStatus.message} type={emailStatus.error ? "error" : "success"} /><Button type="submit" variant="outline" disabled={loading === "email"}>{loading === "email" ? "Gönderiliyor…" : "Doğrulama bağlantısı gönder"}</Button></form></SettingsSection>
 

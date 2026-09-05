@@ -10,32 +10,6 @@ export type Session = {
   user: User;
 };
 
-export type BillingPeriod = "monthly" | "quarterly" | "yearly";
-
-export type Plan = {
-  id: string;
-  code: "free" | "premium";
-  name: string;
-  description: string;
-  options: Array<{
-    billingPeriod: BillingPeriod;
-    durationMonths: number;
-    priceCents: number | null;
-    currency: string;
-  }>;
-};
-
-export type Subscription = {
-  id: string;
-  status: "active" | "canceled" | "expired";
-  starts_at: string;
-  ends_at: string | null;
-  plan_code: "free" | "premium";
-  plan_name: string;
-  billing_period: BillingPeriod | null;
-  duration_months: number | null;
-};
-
 export type ApiResponse<T = undefined> = {
   success: true;
   message?: string;

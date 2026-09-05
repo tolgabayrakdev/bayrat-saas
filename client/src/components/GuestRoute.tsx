@@ -6,7 +6,7 @@ export function GuestRoute() {
 
   if (loading) {
     return (
-      <div className="grid min-h-screen place-items-center text-sm text-zinc-500">
+      <div className="grid min-h-screen place-items-center bg-background text-sm text-muted-foreground">
         Oturum kontrol ediliyor…
       </div>
     );
