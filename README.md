@@ -35,20 +35,20 @@ npm run db:status
 - `GET /health`
 - `POST /api/auth/register` — `{ "name", "email", "password" }`
 - `POST /api/auth/login` — `{ "email", "password" }`
-- `POST /api/auth/refresh` — `{ "refreshToken" }`
-- `POST /api/auth/logout` — `{ "refreshToken" }`
+- `POST /api/auth/refresh` — HttpOnly cookie kullanır
+- `POST /api/auth/logout` — HttpOnly cookie kullanır
 - `POST /api/auth/verify-email` — `{ "token" }`
 - `POST /api/auth/resend-verification` — `{ "email" }`
 - `POST /api/auth/forgot-password` — `{ "email" }`
 - `POST /api/auth/reset-password` — `{ "token", "newPassword" }`
-- `GET /api/users/me` — `Authorization: Bearer <token>` gerekir
-- `PATCH /api/users/me` — `{ "name" }`, token gerekir
-- `PATCH /api/users/me/password` — `{ "currentPassword", "newPassword" }`, token gerekir
-- `POST /api/users/me/email-change` — `{ "currentPassword", "newEmail" }`, token gerekir
-- `DELETE /api/users/me` — `{ "currentPassword" }`, token gerekir
+- `GET /api/users/me` — HttpOnly access cookie gerekir
+- `PATCH /api/users/me` — `{ "name" }`, access cookie gerekir
+- `PATCH /api/users/me/password` — `{ "currentPassword", "newPassword" }`, access cookie gerekir
+- `POST /api/users/me/email-change` — `{ "currentPassword", "newEmail" }`, access cookie gerekir
+- `DELETE /api/users/me` — `{ "currentPassword" }`, access cookie gerekir
 - `GET /api/subscriptions/plans`
-- `GET /api/subscriptions/me` — token gerekir
-- `POST /api/subscriptions/me/upgrade` — `{ "billingPeriod" }`, token gerekir
-- `POST /api/subscriptions/me/cancel` — token gerekir
+- `GET /api/subscriptions/me` — access cookie gerekir
+- `POST /api/subscriptions/me/upgrade` — `{ "billingPeriod" }`, access cookie gerekir
+- `POST /api/subscriptions/me/cancel` — access cookie gerekir
 
 Akış: route → validation/auth middleware → controller → service → repository → PostgreSQL.

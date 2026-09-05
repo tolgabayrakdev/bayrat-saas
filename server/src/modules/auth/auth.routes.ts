@@ -5,7 +5,6 @@ import { loginRateLimit, verificationRateLimit } from "./auth.rate-limit";
 import {
   forgotPasswordSchema,
   loginSchema,
-  refreshTokenSchema,
   registerSchema,
   resendVerificationSchema,
   resetPasswordSchema,
@@ -21,16 +20,8 @@ authRouter.post(
   validate({ body: loginSchema }),
   authController.login,
 );
-authRouter.post(
-  "/refresh",
-  validate({ body: refreshTokenSchema }),
-  authController.refresh,
-);
-authRouter.post(
-  "/logout",
-  validate({ body: refreshTokenSchema }),
-  authController.logout,
-);
+authRouter.post("/refresh", authController.refresh);
+authRouter.post("/logout", authController.logout);
 authRouter.post(
   "/verify-email",
   verificationRateLimit,

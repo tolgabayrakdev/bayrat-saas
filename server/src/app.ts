@@ -1,4 +1,5 @@
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -12,7 +13,8 @@ import { notFound } from "./shared/middlewares/not-found";
 export const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: env.CORS_ORIGINS }));
+app.use(cors({ origin: env.CORS_ORIGINS, credentials: true }));
+app.use(cookieParser());
 app.use(express.json({ limit: "100kb" }));
 app.use(morgan("dev"));
 

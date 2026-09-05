@@ -9,7 +9,6 @@ import type { PublicUser, UserRow } from "../users/user.types";
 import type {
   ForgotPasswordInput,
   LoginInput,
-  RefreshTokenInput,
   RegisterInput,
   ResendVerificationInput,
   ResetPasswordInput,
@@ -67,10 +66,10 @@ export const authService = {
     };
   },
 
-  async refresh(input: RefreshTokenInput) {
+  async refresh(refreshToken: string) {
     const newRefreshToken = randomBytes(32).toString("hex");
     const session = await authSessionRepository.rotate(
-      hashToken(input.refreshToken),
+      hashToken(refreshToken),
       hashToken(newRefreshToken),
       refreshTokenExpiry(),
     );
@@ -85,8 +84,8 @@ export const authService = {
     };
   },
 
-  async logout(input: RefreshTokenInput) {
-    await authSessionRepository.revoke(hashToken(input.refreshToken));
+  async logout(refreshToken?: string) {
+    if (refreshToken) await authSessionRepository.revoke(hashToken(refreshToken));
   },
 
   async verifyEmail(input: VerifyEmailInput) {

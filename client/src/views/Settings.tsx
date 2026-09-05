@@ -89,6 +89,7 @@ export default function SettingsPage() {
         true,
       );
       setPasswordStatus({ message: response.message ?? "Parola güncellendi" });
+      await api.post("/auth/logout");
       endSession();
       setTimeout(() => navigate("/login", { replace: true }), 900);
     } catch (error) {
@@ -112,6 +113,7 @@ export default function SettingsPage() {
         { currentPassword: form.get("currentPassword") },
         true,
       );
+      await api.post("/auth/logout");
       endSession();
       navigate("/login", { replace: true });
     } catch (error) {

@@ -4,11 +4,12 @@ import { env } from "../../config/env";
 import { appError } from "../../shared/errors/app-error";
 import { userRepository } from "../users/user.repository";
 import { authSessionRepository } from "./auth-session.repository";
+import { ACCESS_TOKEN_COOKIE } from "./auth.cookies";
 
 export const requireAuth: RequestHandler = async (request, _response, next) => {
-  const [scheme, token] = request.headers.authorization?.split(" ") ?? [];
+  const token = request.cookies[ACCESS_TOKEN_COOKIE] as string | undefined;
 
-  if (scheme !== "Bearer" || !token) {
+  if (!token) {
     next(appError(401, "Yetkilendirme token'ı gerekli", "UNAUTHORIZED"));
     return;
   }

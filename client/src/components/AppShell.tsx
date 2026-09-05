@@ -2,7 +2,7 @@ import { useState, type ComponentType } from "react";
 import { Landmark, LayoutGrid, LogOut, Menu, Settings } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { useAuth } from "@/auth/useAuth";
-import { api, tokenStorage } from "@/lib/api";
+import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -96,9 +96,8 @@ export function AppShell() {
 
   async function logout() {
     setMobileMenuOpen(false);
-    const refreshToken = tokenStorage.getRefresh();
     try {
-      if (refreshToken) await api.post("/auth/logout", { refreshToken });
+      await api.post("/auth/logout");
     } finally {
       endSession();
       navigate("/login", { replace: true });

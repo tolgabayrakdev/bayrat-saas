@@ -2,13 +2,13 @@ import type { Request, Response } from "express";
 import type {
   ForgotPasswordInput,
   LoginInput,
-  RefreshTokenInput,
   RegisterInput,
   ResendVerificationInput,
   ResetPasswordInput,
   VerifyEmailInput,
 } from "./auth.schemas";
 import { authService } from "./auth.service";
+import { authCookies, REFRESH_TOKEN_COOKIE } from "./auth.cookies";
 
 export const authController = {
   async register(request: Request, response: Response) {
@@ -21,16 +21,30 @@ export const authController = {
 
   async login(request: Request, response: Response) {
     const result = await authService.login(request.body as LoginInput);
-    response.json({ success: true, data: result });
+    authCookies.set(response, result.accessToken, result.refreshToken);
+    response.json({ success: true, data: { user: result.user } });
   },
 
   async refresh(request: Request, response: Response) {
-    const result = await authService.refresh(request.body as RefreshTokenInput);
-    response.json({ success: true, data: result });
+    const refreshToken = request.cookies[REFRESH_TOKEN_COOKIE] as string | undefined;
+    if (!refreshToken) {
+      response.status(401).json({ success: false, error: { code: "INVALID_REFRESH_TOKEN", message: "Refresh token bulunamadı" } });
+      return;
+    }
+    try {
+      const result = await authService.refresh(refreshToken);
+      authCookies.set(response, result.accessToken, result.refreshToken);
+      response.json({ success: true, message: "Oturum yenilendi" });
+    } catch (error) {
+      authCookies.clear(response);
+      throw error;
+    }
   },
 
   async logout(request: Request, response: Response) {
-    await authService.logout(request.body as RefreshTokenInput);
+    const refreshToken = request.cookies[REFRESH_TOKEN_COOKIE] as string | undefined;
+    await authService.logout(refreshToken);
+    authCookies.clear(response);
     response.json({ success: true, message: "Başarıyla çıkış yapıldı" });
   },
 

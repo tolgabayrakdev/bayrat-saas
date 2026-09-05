@@ -90,7 +90,7 @@ Content-Type: application/json
 
 ### POST /api/auth/login
 
-Doğrulanmış hesapla giriş yapar. Access ve refresh token döndürür.
+Doğrulanmış hesapla giriş yapar. Access ve refresh token'ları HttpOnly cookie olarak ayarlar.
 
 ```http
 POST /api/auth/login
@@ -112,47 +112,38 @@ Content-Type: application/json
       "email": "tolga@example.com",
       "email_verified_at": "2026-09-03T12:00:00.000Z",
       "created_at": "2026-09-03T11:55:00.000Z"
-    },
-    "accessToken": "jwt-access-token",
-    "refreshToken": "refresh-token"
+    }
   }
 }
 ```
 
 ### POST /api/auth/refresh
 
-Refresh token'ı yenisiyle değiştirir ve yeni access token verir. Eski refresh token tekrar kullanılamaz.
+HttpOnly refresh cookie ile oturumu yeniler. Yeni access ve refresh cookie ayarlanır; eski refresh token tekrar kullanılamaz.
 
 ```http
 POST /api/auth/refresh
 Content-Type: application/json
 
-{
-  "refreshToken": "refresh-token"
-}
+Body gerekmez.
 ```
 
 ```json
 {
   "success": true,
-  "data": {
-    "accessToken": "yeni-jwt-access-token",
-    "refreshToken": "yeni-refresh-token"
-  }
+  "message": "Oturum yenilendi"
 }
 ```
 
 ### POST /api/auth/logout
 
-Refresh token'a bağlı oturumu kapatır.
+HttpOnly refresh cookie'ye bağlı oturumu kapatır ve auth cookie'lerini temizler.
 
 ```http
 POST /api/auth/logout
 Content-Type: application/json
 
-{
-  "refreshToken": "refresh-token"
-}
+Body gerekmez.
 ```
 
 ```json
@@ -205,10 +196,10 @@ Content-Type: application/json
 
 ## Kullanıcı ve ayarlar
 
-Bu bölümdeki bütün endpoint'ler access token gerektirir:
+Bu bölümdeki bütün endpoint'ler HttpOnly access cookie gerektirir. Cookie tarayıcı tarafından otomatik gönderilir.
 
 ```http
-Authorization: Bearer <accessToken>
+Cookie: access_token=<HttpOnly>
 ```
 
 ### GET /api/users/me
@@ -217,7 +208,7 @@ Giriş yapan kullanıcının profilini getirir.
 
 ```http
 GET /api/users/me
-Authorization: Bearer <accessToken>
+Cookie: access_token=<HttpOnly>
 ```
 
 ```json
@@ -239,7 +230,7 @@ Giriş yapan kullanıcının adını günceller.
 
 ```http
 PATCH /api/users/me
-Authorization: Bearer <accessToken>
+Cookie: access_token=<HttpOnly>
 Content-Type: application/json
 
 {
@@ -253,7 +244,7 @@ Giriş yapan kullanıcının parolasını değiştirir ve bütün oturumlarını
 
 ```http
 PATCH /api/users/me/password
-Authorization: Bearer <accessToken>
+Cookie: access_token=<HttpOnly>
 Content-Type: application/json
 
 {
@@ -275,7 +266,7 @@ Yeni e-posta adresine doğrulama bağlantısı gönderir. E-posta, bağlantı on
 
 ```http
 POST /api/users/me/email-change
-Authorization: Bearer <accessToken>
+Cookie: access_token=<HttpOnly>
 Content-Type: application/json
 
 {
@@ -297,7 +288,7 @@ Giriş yapan kullanıcının hesabını kalıcı olarak siler.
 
 ```http
 DELETE /api/users/me
-Authorization: Bearer <accessToken>
+Cookie: access_token=<HttpOnly>
 Content-Type: application/json
 
 {
@@ -344,12 +335,12 @@ Aktif Free ve Premium planları ve Premium dönem seçeneklerini listeler.
 
 ### GET /api/subscriptions/me
 
-Kullanıcının mevcut aboneliğini getirir. Access token gerekir.
+Kullanıcının mevcut aboneliğini getirir. HttpOnly access cookie gerekir.
 Premium süresi dolmuşsa abonelik otomatik olarak Free plana geçirilir.
 
 ### POST /api/subscriptions/me/upgrade
 
-Development demosunda ödeme almadan Premium aboneliği aktif eder. Access token gerekir.
+Development demosunda ödeme almadan Premium aboneliği aktif eder. HttpOnly access cookie gerekir.
 
 ```json
 {
@@ -361,4 +352,4 @@ Development demosunda ödeme almadan Premium aboneliği aktif eder. Access token
 
 ### POST /api/subscriptions/me/cancel
 
-Development demosunda Premium aboneliği iptal edip hesabı Free plana geçirir. Access token gerekir.
+Development demosunda Premium aboneliği iptal edip hesabı Ücretsiz plana geçirir. HttpOnly access cookie gerekir.
